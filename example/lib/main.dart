@@ -41,7 +41,9 @@ class _QRViewExampleState extends State<QRViewExample> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  double totalSum = 0;
+  List<double> scannedValues = [];
+
+  double get totalSum => scannedValues.fold(0, (sum, item) => sum + item);
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -68,8 +70,34 @@ class _QRViewExampleState extends State<QRViewExample> {
             color: Colors.black.withOpacity(0.3),
             padding: const EdgeInsets.all(8),
             child: Text(
-              'Total: $totalSum',
+              'Total: CHF ${totalSum.toStringAsFixed(2)}',
               style: const TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 60,
+          left: 20,
+          child: ElevatedButton(
+            onPressed: scannedValues.isNotEmpty
+                ? () {
+                    setState(() {
+                      scannedValues.removeLast();
+                    });
+                  }
+                : null,
+            child: const Text('Undo Last Value'),
+          ),
+        ),
+        Positioned(
+          top: 100,
+          left: 20,
+          child: Container(
+            color: Colors.black.withOpacity(0.3),
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              'Scanned Values:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}',
+              style: const TextStyle(color: Colors.grey, fontSize: 20),
             ),
           ),
         ),
@@ -108,7 +136,7 @@ class _QRViewExampleState extends State<QRViewExample> {
         setState(() {
           result = scanData;
           double extracted = extractAmount(scanData.code) ?? 0.0;
-          totalSum += extracted;
+          scannedValues.add(extracted);
         });
       }
     });
