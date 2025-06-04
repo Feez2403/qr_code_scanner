@@ -1,4 +1,4 @@
-String? extractAmount(String? qrCodeText) {
+double? extractAmount(String? qrCodeText) {
   if (qrCodeText == null) {
     return null;
   }
@@ -6,7 +6,12 @@ String? extractAmount(String? qrCodeText) {
 
   for (int i = 1; i < lines.length; i++) {
     if (lines[i].trim() == 'CHF') {
-      return lines[i - 1].trim();
+      // try to parse, if fail continue
+      try {
+        return double.parse(lines[i - 1].trim());
+      } catch (e) {
+        continue;
+      }
     }
   }
 
