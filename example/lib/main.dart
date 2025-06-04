@@ -49,7 +49,6 @@ class _QRViewExampleState extends State<QRViewExample> {
   // is android, or resume the camera if the platform is iOS.
   @override
   void reassemble() {
-    print("reassemble");
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
@@ -59,7 +58,6 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   Widget build(BuildContext context) {
-    print("building");
     return Stack(
       children: [
         _buildQrView(context),
@@ -83,6 +81,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                 ? () {
                     setState(() {
                       scannedValues.removeLast();
+                      result = null;
                     });
                   }
                 : null,
@@ -132,7 +131,6 @@ class _QRViewExampleState extends State<QRViewExample> {
     });
     controller.scannedDataStream.listen((scanData) {
       if (result?.code != scanData.code) {
-        print(scanData.code);
         setState(() {
           result = scanData;
           double extracted = extractAmount(scanData.code) ?? 0.0;
@@ -153,7 +151,6 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   void dispose() {
-    print("disposed");
     controller?.dispose();
     super.dispose();
   }
