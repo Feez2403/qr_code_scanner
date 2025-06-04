@@ -58,11 +58,12 @@ class QRView extends StatefulWidget {
 }
 
 class _QRViewState extends State<QRView> {
-  late MethodChannel _channel;
+  MethodChannel? _channel;
   late LifecycleEventHandler _observer;
 
   @override
   void initState() {
+    print('QRView: initState called');
     super.initState();
     _observer = LifecycleEventHandler(resumeCallBack: updateDimensions);
     WidgetsBinding.instance.addObserver(_observer);
@@ -70,6 +71,7 @@ class _QRViewState extends State<QRView> {
 
   @override
   Widget build(BuildContext context) {
+    print('QRView: build called');
     return NotificationListener(
       onNotification: onNotification,
       child: SizeChangedLayoutNotifier(
@@ -82,22 +84,31 @@ class _QRViewState extends State<QRView> {
 
   @override
   void dispose() {
+    print('QRView: dispose called');
     super.dispose();
     WidgetsBinding.instance.removeObserver(_observer);
   }
 
   Future<void> updateDimensions() async {
+    print('QRView: updateDimensions called');
+    if (_channel == null) {
+      print('QRView: updateDimensions skipped, _channel is null');
+      return;
+    }
     await QRViewController.updateDimensions(
-        widget.key as GlobalKey<State<StatefulWidget>>, _channel,
+        widget.key as GlobalKey<State<StatefulWidget>>, _channel!,
         overlay: widget.overlay);
+    print('QRView: updateDimensions completed');
   }
 
   bool onNotification(notification) {
+    print('QRView: onNotification called');
     updateDimensions();
     return false;
   }
 
   Widget _getPlatformQrViewWithOverlay() {
+    print('QRView: _getPlatformQrViewWithOverlay called');
     return Stack(
       children: [
         _getPlatformQrView(),
@@ -114,6 +125,7 @@ class _QRViewState extends State<QRView> {
   }
 
   Widget _getPlatformQrView() {
+    print('QRView: _getPlatformQrView called');
     Widget _platformQrView;
     if (kIsWeb) {
       _platformQrView = createWebQrView(
@@ -154,7 +166,7 @@ class _QRViewState extends State<QRView> {
 
     // Start scan after creation of the view
     final controller = QRViewController._(
-        _channel,
+        _channel!,
         widget.key as GlobalKey<State<StatefulWidget>>?,
         widget.onPermissionSet,
         widget.cameraFacing)
@@ -228,12 +240,15 @@ class QRViewController {
   /// Starts the barcode scanner
   Future<void> _startScan(GlobalKey key, QrScannerOverlayShape? overlay,
       List<BarcodeFormat>? barcodeFormats) async {
+    print('QRViewController: _startScan called');
     // We need to update the dimension before the scan is started.
     try {
       await QRViewController.updateDimensions(key, _channel, overlay: overlay);
+      print('QRViewController: updateDimensions done in _startScan');
       return await _channel.invokeMethod(
           'startScan', barcodeFormats?.map((e) => e.asInt()).toList() ?? []);
     } on PlatformException catch (e) {
+      print('QRViewController: _startScan PlatformException: ${e.message}');
       throw CameraException(e.code, e.message);
     }
   }
@@ -252,6 +267,7 @@ class QRViewController {
 
   /// Flips the camera between available modes
   Future<CameraFacing> flipCamera() async {
+    print('QRViewController: flipCamera called');
     try {
       return CameraFacing
           .values[await _channel.invokeMethod('flipCamera') as int];
@@ -271,6 +287,7 @@ class QRViewController {
 
   /// Toggles the flashlight between available modes
   Future<void> toggleFlash() async {
+    print('QRViewController: toggleFlash called');
     try {
       await _channel.invokeMethod('toggleFlash') as bool?;
     } on PlatformException catch (e) {
@@ -280,6 +297,7 @@ class QRViewController {
 
   /// Pauses the camera and barcode scanning
   Future<void> pauseCamera() async {
+    print('QRViewController: pauseCamera called');
     try {
       await _channel.invokeMethod('pauseCamera');
     } on PlatformException catch (e) {
@@ -289,6 +307,7 @@ class QRViewController {
 
   /// Stops barcode scanning and the camera
   Future<void> stopCamera() async {
+    print('QRViewController: stopCamera called');
     try {
       await _channel.invokeMethod('stopCamera');
     } on PlatformException catch (e) {
@@ -298,6 +317,7 @@ class QRViewController {
 
   /// Resumes barcode scanning
   Future<void> resumeCamera() async {
+    print('QRViewController: resumeCamera called');
     try {
       await _channel.invokeMethod('resumeCamera');
     } on PlatformException catch (e) {
@@ -321,6 +341,7 @@ class QRViewController {
 
   /// Stops the camera and disposes the barcode stream.
   void dispose() {
+    print('QRViewController: dispose called');
     if (defaultTargetPlatform == TargetPlatform.iOS) stopCamera();
     _scanUpdateController.close();
   }

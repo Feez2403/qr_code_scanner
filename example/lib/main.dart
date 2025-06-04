@@ -7,45 +7,23 @@ import 'package:qr_code_scanner_example/utils.dart';
 
 void main() => runApp(const MaterialApp(home: MyHome()));
 
-class MyHome extends StatefulWidget {
+class MyHome extends StatelessWidget {
   const MyHome({Key? key}) : super(key: key);
-
-  @override
-  State<MyHome> createState() => _MyHomeState();
-}
-
-class _MyHomeState extends State<MyHome> {
-  double totalSum = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Flutter Demo Home Page')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                final result = await Navigator.of(context).push<String>(
-                  MaterialPageRoute(
-                    builder: (context) => const QRViewExample(),
-                  ),
-                );
-                if (result != null) {
-                  setState(() {
-                    double extracted = extractAmount(result) ?? 0.0;
-                    totalSum += extracted;
-                  });
-                }
-              },
-              child: const Text('qrView'),
-            ),
-            ...[
-              const SizedBox(height: 20),
-              Text('Scanned result: $totalSum'),
-            ],
-          ],
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const QRViewExample(),
+              ),
+            );
+          },
+          child: const Text('qrView'),
         ),
       ),
     );
@@ -63,11 +41,13 @@ class _QRViewExampleState extends State<QRViewExample> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  double totalSum = 0;
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
   @override
   void reassemble() {
+    print("reassemble");
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
@@ -78,10 +58,22 @@ class _QRViewExampleState extends State<QRViewExample> {
   @override
   Widget build(BuildContext context) {
     print("building");
-    return Scaffold(
-      body: Column(
-        children: <Widget>[Expanded(flex: 4, child: _buildQrView(context))],
-      ),
+    return Stack(
+      children: [
+        _buildQrView(context),
+        Positioned(
+          top: 20,
+          left: 20,
+          child: Container(
+            color: Colors.black.withOpacity(0.3),
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              'Total: $totalSum',
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -115,9 +107,9 @@ class _QRViewExampleState extends State<QRViewExample> {
         print(scanData.code);
         setState(() {
           result = scanData;
+          double extracted = extractAmount(scanData.code) ?? 0.0;
+          totalSum += extracted;
         });
-        // Navigate back to home page after scanning and pass scanned code
-        Navigator.of(context).pop(scanData.code);
       }
     });
   }
