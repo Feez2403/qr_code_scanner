@@ -8,21 +8,45 @@ import 'package:qr_code_scanner_example/utils.dart';
 
 void main() => runApp(const MaterialApp(home: MyHome()));
 
-class MyHome extends StatelessWidget {
+class MyHome extends StatefulWidget {
   const MyHome({Key? key}) : super(key: key);
+
+  @override
+  State<MyHome> createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> {
+  double totalSum = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Flutter Demo Home Page')),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const QRViewExample(),
-            ));
-          },
-          child: const Text('qrView'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                final result = await Navigator.of(context).push<String>(
+                  MaterialPageRoute(
+                    builder: (context) => const QRViewExample(),
+                  ),
+                );
+                if (result != null) {
+                  setState(() {
+                    double extracted = extractAmount(result) ?? 0.0;
+                    totalSum += extracted;
+                  });
+                }
+              },
+              child: const Text('qrView'),
+            ),
+            ...[
+              const SizedBox(height: 20),
+              Text('Scanned result: $totalSum'),
+            ],
+          ],
         ),
       ),
     );
@@ -175,6 +199,8 @@ class _QRViewExampleState extends State<QRViewExample> {
         setState(() {
           result = scanData;
         });
+        // Navigate back to home page after scanning and pass scanned code
+        Navigator.of(context).pop(scanData.code);
       }
     });
   }
