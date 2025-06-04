@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qr_code_scanner_example/utils.dart';
 
 void main() => runApp(const MaterialApp(home: MyHome()));
 
@@ -66,7 +67,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                 children: <Widget>[
                   if (result != null)
                     Text(
-                        'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
+                        'Barcode Type: ${describeEnum(result!.format)}   Data: ${extractAmount(result!.code)}')
                   else
                     const Text('Scan a code'),
                   Row(
@@ -169,9 +170,12 @@ class _QRViewExampleState extends State<QRViewExample> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+      if (result?.code != scanData.code) {
+        print(scanData.code);
+        setState(() {
+          result = scanData;
+        });
+      }
     });
   }
 
