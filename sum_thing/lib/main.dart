@@ -72,7 +72,7 @@ class _QRSumViewState extends State<QRSumView> {
       children: [
         _buildQrView(context),
         Positioned(
-          top: 0,
+          top: 40,
           left: 0,
           child: Container(
             color: Colors.black.withOpacity(0.3),
@@ -84,7 +84,7 @@ class _QRSumViewState extends State<QRSumView> {
           ),
         ),
         Positioned(
-          top: 50,
+          top: 90,
           left: 0,
           child: ElevatedButton(
             onPressed: scannedValues.isNotEmpty
@@ -99,7 +99,7 @@ class _QRSumViewState extends State<QRSumView> {
           ),
         ),
         Positioned(
-          top: 100,
+          top: 130,
           left: 0,
           bottom: 0,
           width: 150,
