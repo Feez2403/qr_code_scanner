@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:qr_code_scanner_example/utils.dart';
+import 'package:sum_thing/utils.dart';
 
 void main() => runApp(const MaterialApp(home: MyHome()));
 
@@ -27,7 +27,7 @@ class MyHome extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const QRViewExample(),
+                    builder: (context) => const QRSumView(),
                   ),
                 );
               },
@@ -40,14 +40,14 @@ class MyHome extends StatelessWidget {
   }
 }
 
-class QRViewExample extends StatefulWidget {
-  const QRViewExample({Key? key}) : super(key: key);
+class QRSumView extends StatefulWidget {
+  const QRSumView({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QRViewExampleState();
+  State<StatefulWidget> createState() => _QRSumViewState();
 }
 
-class _QRViewExampleState extends State<QRViewExample> {
+class _QRSumViewState extends State<QRSumView> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -72,8 +72,8 @@ class _QRViewExampleState extends State<QRViewExample> {
       children: [
         _buildQrView(context),
         Positioned(
-          top: 20,
-          left: 20,
+          top: 0,
+          left: 0,
           child: Container(
             color: Colors.black.withOpacity(0.3),
             padding: const EdgeInsets.all(8),
@@ -84,8 +84,8 @@ class _QRViewExampleState extends State<QRViewExample> {
           ),
         ),
         Positioned(
-          top: 60,
-          left: 20,
+          top: 50,
+          left: 0,
           child: ElevatedButton(
             onPressed: scannedValues.isNotEmpty
                 ? () {
