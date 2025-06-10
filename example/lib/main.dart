@@ -100,13 +100,17 @@ class _QRViewExampleState extends State<QRViewExample> {
         ),
         Positioned(
           top: 100,
-          left: 20,
+          left: 0,
+          bottom: 0,
+          width: 150,
           child: Container(
             color: Colors.black.withOpacity(0.3),
             padding: const EdgeInsets.all(8),
-            child: Text(
-              'Scanned Values:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}',
-              style: const TextStyle(color: Colors.grey, fontSize: 20),
+            child: SingleChildScrollView(
+              child: Text(
+                'Scanned Values:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}',
+                style: const TextStyle(color: Colors.grey, fontSize: 16),
+              ),
             ),
           ),
         ),
@@ -143,8 +147,16 @@ class _QRViewExampleState extends State<QRViewExample> {
       if (result?.code != scanData.code) {
         setState(() {
           result = scanData;
-          double extracted = extractAmount(scanData.code) ?? 0.0;
-          scannedValues.add(extracted);
+          if (result?.format == BarcodeFormat.qrcode) {
+            double? extracted = extractAmount(scanData.code);
+            if (extracted != null) {
+              scannedValues.add(extracted);
+            } else {
+              // INVALID QR CODE (not a QR facture or wrong format)
+            }
+          } else {
+            // NOT A QR CODE
+          }
         });
       }
     });
