@@ -1,4 +1,4 @@
-# sum_thing app
+# SumThing app
 
 This prototype Flutter sums the values of QR-bills to extract monetary amounts from the scanned data and sum it.
 
