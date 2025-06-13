@@ -63,6 +63,8 @@ class _QRSumViewState extends State<QRSumView> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   List<double> scannedValues = [];
 
+  bool isSidebarOpen = true;
+
   Color _borderColor = Colors.red;
 
   double get totalSum => scannedValues.fold(0, (sum, item) => sum + item);
@@ -82,7 +84,13 @@ class _QRSumViewState extends State<QRSumView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        _buildQrView(context),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          child: _buildQrView(context),
+        ),
         Positioned(
           bottom: 20,
           left: 0,
@@ -119,20 +127,36 @@ class _QRSumViewState extends State<QRSumView> {
         Positioned(
           top: 100,
           left: 0,
-          bottom: 0,
-          width: 150,
-          child: Container(
-            color: Colors.black.withOpacity(0.3),
-            padding: const EdgeInsets.all(8),
-            child: SingleChildScrollView(
-              child: DefaultTextStyle(
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-                child: Text(
-                    'Valeurs Scannées:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}'),
+          child: IconButton(
+            icon: Icon(
+              isSidebarOpen ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
+              color: Colors.grey,
+            ),
+            onPressed: () {
+              setState(() {
+                isSidebarOpen = !isSidebarOpen;
+              });
+            },
+          ),
+        ),
+        if (isSidebarOpen)
+          Positioned(
+            top: 150,
+            left: 0,
+            bottom: 0,
+            width: 150,
+            child: Container(
+              color: Colors.black.withOpacity(0.3),
+              padding: const EdgeInsets.all(8),
+              child: SingleChildScrollView(
+                child: DefaultTextStyle(
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                      'Valeurs Scannées:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}'),
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
