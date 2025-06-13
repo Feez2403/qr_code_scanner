@@ -63,6 +63,8 @@ class _QRSumViewState extends State<QRSumView> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   List<double> scannedValues = [];
 
+  Color _borderColor = Colors.red;
+
   double get totalSum => scannedValues.fold(0, (sum, item) => sum + item);
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -147,7 +149,7 @@ class _QRSumViewState extends State<QRSumView> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.red,
+          borderColor: _borderColor,
           borderRadius: 10,
           borderLength: 30,
           borderWidth: 10,
@@ -168,6 +170,12 @@ class _QRSumViewState extends State<QRSumView> {
             double? extracted = extractAmount(scanData.code);
             if (extracted != null) {
               scannedValues.add(extracted);
+              _borderColor = Colors.green;
+              Future.delayed(const Duration(milliseconds: 500), () {
+                setState(() {
+                  _borderColor = Colors.red;
+                });
+              });
             } else {
               // INVALID QR CODE (not a QR facture or wrong format)
             }
