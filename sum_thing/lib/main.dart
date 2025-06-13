@@ -72,19 +72,25 @@ class _QRSumViewState extends State<QRSumView> {
       children: [
         _buildQrView(context),
         Positioned(
-          top: 40,
+          bottom: 20,
           left: 0,
-          child: Container(
-            color: Colors.black.withOpacity(0.3),
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              'Total: CHF ${totalSum.toStringAsFixed(2)}',
-              style: const TextStyle(color: Colors.white, fontSize: 20),
+          right: 0,
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: DefaultTextStyle(
+                style: const TextStyle(color: Colors.white, fontSize: 20),
+                child: Text('Total: CHF ${totalSum.toStringAsFixed(2)}'),
+              ),
             ),
           ),
         ),
         Positioned(
-          top: 90,
+          top: 50,
           left: 0,
           child: ElevatedButton(
             onPressed: scannedValues.isNotEmpty
@@ -99,7 +105,7 @@ class _QRSumViewState extends State<QRSumView> {
           ),
         ),
         Positioned(
-          top: 130,
+          top: 90,
           left: 0,
           bottom: 0,
           width: 150,
@@ -107,9 +113,10 @@ class _QRSumViewState extends State<QRSumView> {
             color: Colors.black.withOpacity(0.3),
             padding: const EdgeInsets.all(8),
             child: SingleChildScrollView(
-              child: Text(
-                'Scanned Values:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}',
-                style: const TextStyle(color: Colors.grey, fontSize: 16),
+              child: DefaultTextStyle(
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+                child: Text(
+                    'Valeurs Scannées:\n${scannedValues.map((s) => "CHF " + s.toString()).join('\n')}'),
               ),
             ),
           ),
