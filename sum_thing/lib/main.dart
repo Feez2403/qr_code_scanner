@@ -23,6 +23,16 @@ class MyHome extends StatelessWidget {
             const SizedBox(height: 20),
             Image.asset('assets/logo.png'),
             const SizedBox(height: 20),
+            const SizedBox(
+                width: 300,
+                child: Text(
+                    "Une application permettant d'additionner les montants des QR-factures",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                    ))),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(
@@ -31,7 +41,7 @@ class MyHome extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Open QR Scanner'),
+              child: const Text('Ouvrir le scanner de QR'),
             ),
           ],
         ),
@@ -101,11 +111,11 @@ class _QRSumViewState extends State<QRSumView> {
                     });
                   }
                 : null,
-            child: const Text('Undo Last Value'),
+            child: const Text('Annuler le dernier'),
           ),
         ),
         Positioned(
-          top: 90,
+          top: 100,
           left: 0,
           bottom: 0,
           width: 150,
